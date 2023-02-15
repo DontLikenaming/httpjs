@@ -12,6 +12,6 @@ const server = http.createServer((req, res)=>{
 });
 
 server.listen(port, () =>{
-    console.log('서버 실행 중.. 중지하려면 Ctrl + c를 누르세요.')
+    console.log('서버 실행 중.. 중지하려면 Ctrl + F2를 누르세요.')
 });
 
