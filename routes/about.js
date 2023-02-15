@@ -1,9 +1,9 @@
 const express = require('express');
+const path = require('path');
 const router = express.Router();
-const html = 'text/html; charset=utf-8';
+
 
 router.get('/',(req,res)=>{
-    res.type(html);
-    res.end('<h1>about 페이지</h1>');
+    res.sendFile(path.join(__dirname,'../public','about.html'));
 });
 module.exports = router;
