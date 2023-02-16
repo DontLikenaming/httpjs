@@ -1,0 +1,42 @@
+{{#section 'script'}}
+    <script>
+        let sjfrm = document.sjfrm;
+        let sjbtn = document.querySelector(`#sjbtn`);
+
+        const processSungJuk = () => {
+            if (sjfrm.name.value === '')alert("이름을 입력하세요!");
+            else if (sjfrm.kor.value === '')alert("국어점수를 입력하세요!");
+            else if (sjfrm.eng.value === '')alert("영어점수를 입력하세요!");
+            else if (sjfrm.mat.value === '')alert("수학점수를 입력하세요!");
+            else{
+                sjfrm.method = 'post';
+                sjfrm.enctype = 'application/x-www-form-urlencoded';
+                sjfrm.submit();
+            }
+        }
+
+        sjbtn.addEventListener(`click`, processSungJuk);
+    </script>
+{{/section}}
+<h1>성적 입력 페이지</h1>
+<form name="sjfrm">
+    <div>
+        <label for="name">이름 : </label>
+        <input type="text" id="name" name="name">
+    </div>
+    <div>
+        <label for="kor">국어 : </label>
+        <input type="text" id="kor" name="kor">
+    </div>
+    <div>
+        <label for="eng">영어 : </label>
+        <input type="text" id="eng" name="eng">
+    </div>
+    <div>
+        <label for="mat">수학 : </label>
+        <input type="text" id="mat" name="mat">
+    </div>
+    <div>
+        <button type="button" id="sjbtn" name="sjbtn">입력</button>
+    </div>
+</form>

@@ -1,7 +1,8 @@
 const express = require('express');
 const path = require('path');
 const logger = require('morgan');
-const {engine} = require("express-handlebars");
+const {engine} = require('express-handlebars');
+const bodyPaser = require('body-parser');
 
 //라우팅 외부 작성
 const indexRouter = require('./routes/index');
@@ -28,6 +29,15 @@ app.set('view engine','hbs');
 app.use(express.static(path.join(__dirname,'static')));
 
 app.use(logger('dev'));
+
+//미들웨어 등록 및 설정
+app.use(express.json());
+//전송된 폼 데이터에 대한 urlencoding 설정
+app.use(express.urlencoded({extended:false}));
+app.use(bodyPaser.json());  //전송된 폼 데이터는 json 형식
+//app.use(bodyPaser.text());    //enctype이 text/plain일 때 필요(비추)
+
+
 
 //index에 대한 route handler 지정
 app.use('/',indexRouter);
