@@ -1,0 +1,24 @@
+{{#section 'script'}}
+{{/section}}
+<h1>성적 전체 리스트입니다.</h1>
+<table>
+    <tr>
+        <th>번호</th>
+        <th>이름</th>
+        <th>국어</th>
+        <th>영어</th>
+        <th>수학</th>
+        <th>등록일</th>
+    </tr>
+    <!--리스트 본문 시작-->
+    {{#sjs}}
+        <tr>
+            <td>{{sjno}}</td>
+            <td>{{name}}</td>
+            <td>{{kor}}</td>
+            <td>{{eng}}</td>
+            <td>{{mat}}</td>
+            <td>{{regdate}}</td>
+        </tr>
+    {{/sjs}}
+</table>

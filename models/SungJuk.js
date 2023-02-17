@@ -1,6 +1,11 @@
 const oracledb = require('../models/Oracle');
 
 class SungJuk {
+
+    insertsql = ' insert into sungjuk (sjno, name, kor, eng, mat, tot, avg, grd) values ' +
+        ' (sjno.nextval, :1, :2, :3, :4, :5, :6, :7) ';
+    selectsql = ` select sjno, name, kor, eng, mat, to_char(REGDATA, 'yyyy-mm-dd') regdate from sungjuk order by sjno desc `;
+
     // 생성자 정의 - 변수 초기화
     constructor(name, kor, eng, mat) {
         kor = parseInt(kor);
@@ -34,14 +39,8 @@ class SungJuk {
         ' (sjno number(5), name varchar(15), kor number(3), eng number(3), mat number(3), ' +
         ' tot number(3), avg number(10), grd varchar(10), regdata date default current_timestamp) ';
     let sql2 = ' create sequence sjno ';*/
-        let sql3 = ' insert into sungjuk (sjno, name, kor, eng, mat, tot, avg, grd) values ' +
-            ' (sjno.nextval, :1, :2, :3, :4, :5, :6, :7) ';
-        let sql4 = ' select * from sungjuk ';
+
         let params = [];
-        let options = {
-            resultSet: true,
-            outFormat: oracledb.OUT_FORMAT_OBJECT
-        };
 
         try{
             conn = await oracledb.makeConn();
@@ -55,11 +54,7 @@ class SungJuk {
             await conn.commit();
             console.log(result);*/
 
-            let result = await conn.execute(sql3, params);
-            await conn.commit();
-            console.log(result);
-
-            result = await conn.execute(sql4);
+            let result = await conn.execute(this.insertsql, params);
             await conn.commit();
             console.log(result);
 
@@ -69,7 +64,35 @@ class SungJuk {
         }
     }
     //성적 전체조회
-    select(){}
+    async select(){
+        let conn = null;
+        let result = null;
+        let sjs = [];
+        let options = {
+            resultSet: true,
+            outFormat: oracledb.OUT_FORMAT_OBJECT
+        };
+
+        try{
+            conn = await oracledb.makeConn();
+
+            result = await conn.execute(this.selectsql, [], options);
+            await conn.commit();
+            let rs = result.resultSet;
+            let row = null;
+            while(row = await rs.getRow()){
+                let sj = new SungJuk(row[1], row[2], row[3], row[4]);
+                sj.sjno = row[0];
+                sj.regdate = row[5];
+                sjs.push(sj);
+            }
+        }catch (e){console.log(e)}
+        finally {
+            await oracledb.closeConn(conn);
+        }
+
+        return await sjs;
+    }
     //성적 상세조회
     insertOne(sjno){}
 }
