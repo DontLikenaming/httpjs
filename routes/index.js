@@ -35,6 +35,13 @@ router.get('/showsungjuk',async (req,res)=>{
     res.render('showsungjuk', {title:'성적 전체보기', sjs: await sjs});
 });
 
+router.get('/viewsungjuk',async (req,res)=>{
+    let sjno = req.query.sjno;     //querystring의 매개변수 추출
+    let sjs = new SungJuk().insertOne(sjno).then(async sjs => {return await sjs;});
+    console.log(await sjs);
+    res.render('viewsungjuk', {title:'성적 상세보기', sjs: await sjs});
+});
+
 //단순한 그림파일을 화면에 표시하기 위해
 //일일이 라우팅 설정하는 것은 번거로움
 /*router.get('/eilean.png',(req,res)=>{

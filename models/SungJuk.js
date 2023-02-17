@@ -5,6 +5,7 @@ class SungJuk {
     insertsql = ' insert into sungjuk (sjno, name, kor, eng, mat, tot, avg, grd) values ' +
         ' (sjno.nextval, :1, :2, :3, :4, :5, :6, :7) ';
     selectsql = ` select sjno, name, kor, eng, mat, to_char(REGDATA, 'yyyy-mm-dd') regdate from sungjuk order by sjno desc `;
+    selectOnesql = ` select sjno, name, kor, eng, mat, tot, avg, grd, to_char(REGDATA, 'yyyy-mm-dd hh-mi-ss') regdate from sungjuk where sjno = :1 `;
 
     // 생성자 정의 - 변수 초기화
     constructor(name, kor, eng, mat) {
@@ -94,6 +95,34 @@ class SungJuk {
         return await sjs;
     }
     //성적 상세조회
-    insertOne(sjno){}
+    async insertOne(sjno){
+        let conn = null;
+        let result = null;
+        let sjs = [];
+        let options = {
+            resultSet: true,
+            outFormat: oracledb.OUT_FORMAT_OBJECT
+        };
+
+        try{
+            conn = await oracledb.makeConn();
+
+            result = await conn.execute(this.selectOnesql, [sjno], options);
+            await conn.commit();
+            let rs = result.resultSet;
+            let row = null;
+            while (row = await rs.getRow()){
+                let js = new SungJuk(row[1],row[3],row[3],row[4],row[5],row[6],row[7]);
+                js.sjno = row[0];
+                js.regdate = row[8];
+                sjs.push(js);
+            }
+        }catch (e){console.log(e)}
+        finally {
+            await oracledb.closeConn(conn);
+        }
+
+        return await sjs;
+    }
 }
 module.exports = SungJuk;
