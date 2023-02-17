@@ -6,8 +6,11 @@
         const processSungJuk = () => {
             if (sjfrm.name.value === '')alert("이름을 입력하세요!");
             else if (sjfrm.kor.value === '')alert("국어점수를 입력하세요!");
+            else if (sjfrm.kor.value < 0||sjfrm.kor.value > 100)alert("국어점수가 잘못 입력되었습니다!");
             else if (sjfrm.eng.value === '')alert("영어점수를 입력하세요!");
+            else if (sjfrm.eng.value < 0||sjfrm.eng.value > 100)alert("영어점수가 잘못 입력되었습니다!");
             else if (sjfrm.mat.value === '')alert("수학점수를 입력하세요!");
+            else if (sjfrm.mat.value < 0||sjfrm.mat.value > 100)alert("수학점수가 잘못 입력되었습니다!");
             else{
                 sjfrm.method = 'post';
                 sjfrm.enctype = 'application/x-www-form-urlencoded';

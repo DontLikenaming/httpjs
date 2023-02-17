@@ -1,6 +1,6 @@
 const express = require('express');
-const app = express();
-const path = require('path');
+/*const app = express();
+const path = require('path');*/
 const oracledb = require("oracledb");
 const dbconfig = require("../dbconfig");
 const router = express.Router();
@@ -22,13 +22,11 @@ router.post('/sungjuk',(req,res,next)=>{
     console.log(req.body);
     //console.log(req.body.name, req.body.kor, req.body.eng, req.body.mat);
     let {name, kor, eng, mat} = req.body;
-    //console.log(name, kor, eng, mat);
+    kor = parseInt(kor);
+    eng = parseInt(eng);
+    mat = parseInt(mat);
+    console.log(name, kor, eng, mat);
 
-    //성적처리
-    const oracledb = require("oracledb");
-    const dbconfig = require("./dbconfig");
-
-    console.log("test");
     let grade = (num) =>{
         let result = '';
         switch(true){
@@ -36,18 +34,24 @@ router.post('/sungjuk',(req,res,next)=>{
             case (num>80): result = '우'; break;
             case (num>70): result = '미'; break;
             case (num>60): result = '양'; break;
-            case (num>50): result = '가'; break;
+            default: result = '가'; break;
         }
         return result;
     };
     let[tot, avg, grd] = [
-        (parseInt(kor)+parseInt(eng)+parseInt(mat)),
-        Math.round((parseInt(kor)+parseInt(eng)+parseInt(mat))/3),
-        grade(Math.round((parseInt(kor)+parseInt(eng)+parseInt(mat))/3))
+        (kor+eng+mat),
+        Math.round( ((kor+eng+mat)/3)*10)/10,
+        grade(Math.round( (kor+eng+mat)/3))
     ]
+    console.log(tot, avg, grd);
     async function main() {
-        let sql1 = " create table sungjuk (name varchar(100), kor number(3), eng number(3), mat number(3), tot number(3), avg number(3), grd varchar(10)) ";
-        let sql2 = "insert into sungjuk values (:1, :2, :3, :4, :5, :6, :7)";
+        /*let sql1 = ' create table sungjuk ' +
+            ' (sjno number(5), name varchar(15), kor number(3), eng number(3), mat number(3), ' +
+            ' tot number(3), avg number(10), grd varchar(10), regdata date default current_timestamp) ';
+        let sql2 = ' create sequence sjno ';*/
+        let sql3 = ' insert into sungjuk (sjno, name, kor, eng, mat, tot, avg, grd) values ' +
+            ' (sjno.nextval, :1, :2, :3, :4, :5, :6, :7) ';
+        let sql4 = ' select * from sungjuk ';
         let params = [];
         let options = {
             resultSet: true,
@@ -59,12 +63,20 @@ router.post('/sungjuk',(req,res,next)=>{
             oracledb.initOracleClient({libdir: 'C:/Java/instantclient_19_17'});
             conn = await oracledb.getConnection(dbconfig);
 
-            let result = await conn.execute(sql1, params);
+            /*let result = await conn.execute(sql1);
             await conn.commit();
             console.log(result);
 
+            result = await conn.execute(sql2);
+            await conn.commit();
+            console.log(result);*/
+
             params = [name, kor, eng, mat, tot, avg, grd];
-            result = await conn.execute(sql2, params);
+            result = await conn.execute(sql3, params);
+            await conn.commit();
+            console.log(result);
+
+            result = await conn.execute(sql4);
             await conn.commit();
             console.log(result);
 
@@ -81,7 +93,6 @@ router.post('/sungjuk',(req,res,next)=>{
     }
     main();
 
-    //console.log(tot, avg, grd);
     res.redirect(304, '/');
 });
 //단순한 그림파일을 화면에 표시하기 위해
