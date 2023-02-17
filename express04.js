@@ -3,6 +3,7 @@ const path = require('path');
 const logger = require('morgan');
 const {engine} = require('express-handlebars');
 const bodyPaser = require('body-parser');
+const oracledb = require('./models/Oracle');
 
 //라우팅 외부 작성
 const indexRouter = require('./routes/index');
@@ -29,6 +30,8 @@ app.set('view engine','hbs');
 app.use(express.static(path.join(__dirname,'static')));
 
 app.use(logger('dev'));
+
+oracledb.initConn();  //오라클 instant client 초기화
 
 //미들웨어 등록 및 설정
 app.use(express.json());
